@@ -1,0 +1,5 @@
+build
+install
+log
+*.pyc
+.mypy_cache
