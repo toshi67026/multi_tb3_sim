@@ -13,7 +13,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
 
-def generate_launch_description():
+def generate_launch_description() -> None:
     pkg_tb3_gazebo = get_package_share_directory("tb3_gazebo")
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
 
@@ -21,30 +21,22 @@ def generate_launch_description():
     world_file_path = os.path.join(pkg_tb3_gazebo, "worlds", world_file_name)
 
     gzserver_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_gazebo_ros, "launch", "gzserver.launch.py")
-        ),
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, "launch", "gzserver.launch.py")),
         launch_arguments={"world": world_file_path}.items(),
     )
 
     gzclient_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_gazebo_ros, "launch", "gzclient.launch.py")
-        )
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, "launch", "gzclient.launch.py"))
     )
 
-    xacro_file_path = os.path.join(
-        pkg_tb3_gazebo, "urdf", "turtlebot3_burger.urdf.xacro"
-    )
+    xacro_file_path = os.path.join(pkg_tb3_gazebo, "urdf", "turtlebot3_burger.urdf.xacro")
 
-    robot_name = "test_tb3"
+    robot_name = "tb3_0"
 
-    # xacro;argを用いてxacroファイルにframe_prefixを渡してlink等に付与する
-    doc = xacro.process_file(
-        xacro_file_path, mappings={"frame_prefix": robot_name + "/"}
-    )
+    # xacro:argを用いてxacroファイルにframe_prefixを渡してlink等に付与する
+    doc = xacro.process_file(xacro_file_path, mappings={"frame_prefix": robot_name + "/"})
     robot_desc = doc.toxml()
-    # きれいに開業する場合
+    # きれいに改行する場合
     # robot_desc = doc.toprettyxml(indent="  ")
 
     robot_state_publisher_node = Node(
