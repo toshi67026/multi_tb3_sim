@@ -1,2 +1,7 @@
+setuptools==58.2.0
+transforms3d
+taskipy
+isort
 black
+ruff
 mypy
