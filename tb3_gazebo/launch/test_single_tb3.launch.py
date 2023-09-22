@@ -20,6 +20,7 @@ def generate_launch_description() -> LaunchDescription:
     world_file_name = "empty_world.model"
     world_file_path = os.path.join(pkg_tb3_gazebo, "worlds", world_file_name)
 
+    # gazebo起動
     gzserver_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, "launch", "gzserver.launch.py")),
         launch_arguments={"world": world_file_path}.items(),
@@ -30,15 +31,19 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     xacro_file_path = os.path.join(pkg_tb3_gazebo, "urdf", "turtlebot3_burger.urdf.xacro")
+    assert os.path.exists(xacro_file_path)
 
     robot_name = "tb3_0"
 
-    # xacro:argを用いてxacroファイルにframe_prefixを渡してlink等に付与する
+    # xacro:argを用いてturtlebot burgerのxacroファイルにframe_prefixを渡してlink等のprefixに設定する
+    # tf2は先頭"/"を削除するためframe_prefixではprefix/の形として与える
     doc = xacro.process_file(xacro_file_path, mappings={"frame_prefix": robot_name + "/"})
     robot_desc = doc.toxml()
-    # きれいに改行する場合
+
+    # xmlをきれいに改行する場合
     # robot_desc = doc.toprettyxml(indent="  ")
 
+    # joint_statesを受信してurdfに基づきtfを更新する
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
@@ -46,6 +51,7 @@ def generate_launch_description() -> LaunchDescription:
         parameters=[{"robot_description": robot_desc}],
     )
 
+    # ロボットモデルをgazebo上へ生成
     spawn_entity_node = Node(
         package="gazebo_ros",
         executable="spawn_entity.py",
@@ -59,6 +65,7 @@ def generate_launch_description() -> LaunchDescription:
         # fmt: on
     )
 
+    # world座標系とロボットi初期位置座標系の固定座標変換
     static_transform_publisher_node = Node(
         package="tf2_ros",
         executable="static_transform_publisher",

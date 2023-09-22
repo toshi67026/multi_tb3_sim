@@ -5,10 +5,10 @@ import os
 import numpy as np
 import xacro
 from ament_index_python.packages import get_package_share_directory
-from launch_ros.actions import GroupAction, Node, PushRosNamespace
+from launch_ros.actions import Node, PushRosNamespace
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
@@ -44,7 +44,7 @@ def generate_launch_description() -> LaunchDescription:
         robot_node_group_list.append(
             GroupAction(
                 actions=[
-                    PushRosNamespace("karugamot"),  # ロボット用のnemaspaceに閉じ込める
+                    PushRosNamespace(robot_name),  # ロボット用のnemaspaceに閉じ込める
                     Node(
                         package="robot_state_publisher",
                         executable="robot_state_publisher",
