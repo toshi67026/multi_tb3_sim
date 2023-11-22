@@ -1,13 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(tb3_gazebo)
 
-find_package(ament_cmake REQUIRED)
-find_package(ament_cmake_python REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclpy REQUIRED)
-find_package(gazebo REQUIRED)
-find_package(gazebo_ros_pkgs REQUIRED)
-find_package(xacro REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
 
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
